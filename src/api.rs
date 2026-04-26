@@ -59,16 +59,16 @@ impl<'a> Api<'a> {
     }
 }
 
-#[derive(Deserialize)]
-struct MetaData {
+#[derive(Deserialize,Debug)]
+pub struct MetaData {
     #[serde(rename = "1. Information")]
-    info: String,
+    pub info: String,
     #[serde(rename = "2. Symbol")]
-    symbol: String,
+    pub symbol: String,
     #[serde(rename = "3. Last Refreshed")]
-    refresh: String,
+    pub refresh: String,
     #[serde(rename = "4. Time Zone")]
-    zone: String,
+    pub zone: String,
 }
 
 impl MetaData {
@@ -85,25 +85,25 @@ impl MetaData {
 #[derive(Deserialize, Debug)]
 pub struct DataBlock {
     #[serde(rename = "1. open")]
-    open: String,
+    pub open: String,
     #[serde(rename = "2. high")]
-    high: String,
+    pub high: String,
     #[serde(rename = "3. low")]
-    low: String,
+    pub low: String,
     #[serde(rename = "4. close")]
-    close: String,
+    pub close: String,
     #[serde(rename = "5. adjusted close")]
-    adjusted: String,
+    pub adjusted: String,
     #[serde(rename = "6. volume")]
-    volume: String,
+    pub volume: String,
     #[serde(rename = "7. dividend amount")]
-    dividend: String,
+    pub dividend: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize,Debug)]
 pub struct ApiData {
     #[serde(rename = "Meta Data")]
-    meta_data: MetaData,
+    pub meta_data: MetaData,
     #[serde(rename = "Weekly Adjusted Time Series")]
     pub historical_data: BTreeMap<NaiveDate, DataBlock>,
 }
