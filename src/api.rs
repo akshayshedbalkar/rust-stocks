@@ -35,7 +35,9 @@ impl<'a> Api<'a> {
             .send()
             .unwrap_or_else(|_| panic!("There was a problem fetching data for {}", stock));
 
-        let api_response: ApiResponse = raw_response.json().expect("There was a problem in deserialization");
+        let api_response: ApiResponse = raw_response
+            .json()
+            .expect("There was a problem in deserialization");
 
         match api_response {
             ApiResponse::Success(data) => {
@@ -59,7 +61,7 @@ impl<'a> Api<'a> {
     }
 }
 
-#[derive(Deserialize,Debug)]
+#[derive(Deserialize, Debug)]
 pub struct MetaData {
     #[serde(rename = "1. Information")]
     pub info: String,
@@ -106,7 +108,7 @@ pub struct DataBlock {
     pub dividend: String,
 }
 
-#[derive(Deserialize,Debug)]
+#[derive(Deserialize, Debug)]
 pub struct ApiData {
     #[serde(rename = "Meta Data")]
     pub meta_data: MetaData,

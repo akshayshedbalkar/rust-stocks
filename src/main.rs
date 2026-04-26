@@ -1,4 +1,3 @@
 fn main() {
-stocks::run();
+    stocks::run();
 }
-
