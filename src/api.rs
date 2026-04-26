@@ -29,17 +29,17 @@ impl<'a> Api<'a> {
     pub fn fetch_stock(&mut self, stock: &str) -> &Self {
         let stock_url = self.base_url.clone() + "&symbol=" + stock;
 
-        let raw_response = self
+        let response = self
             .client
             .get(&stock_url)
             .send()
             .unwrap_or_else(|_| panic!("There was a problem fetching data for {}", stock));
 
-        let api_response: ApiResponse = raw_response
+        let deserialized_response: ApiResponse = response
             .json()
             .expect("There was a problem in deserialization");
 
-        match api_response {
+        match deserialized_response {
             ApiResponse::Success(data) => {
                 self.data.push(data);
             }
@@ -52,8 +52,8 @@ impl<'a> Api<'a> {
     }
 
     pub fn fetch(&mut self) -> &Self {
-        for stock in self.config.stocks.clone() {
-            self.fetch_stock(&stock);
+        for stock in &self.config.stocks {
+            self.fetch_stock(stock);
             std::thread::sleep(std::time::Duration::from_secs(1));
         }
 
