@@ -1,8 +1,8 @@
 pub mod api;
 pub mod config;
 
-use api::*;
-use config::*;
+pub use api::*;
+pub use config::*;
 
 pub fn run() {
     let c = Config::new();
