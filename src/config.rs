@@ -13,6 +13,11 @@ impl Config {
     const CONFIG: &str = include_str!("Stocks.toml");
 
     pub fn new() -> Self {
-        toml::from_str(Config::CONFIG).expect("Unable to parse configuration file")
+        if !std::fs::exists("Stocks.toml").unwrap() {
+            let _ = std::fs::write("Stocks.toml", Config::CONFIG);
+        }
+
+        let file_contents = std::fs::read_to_string("Stocks.toml").unwrap();
+        toml::from_str(&file_contents).expect("Unable to parse configuration file")
     }
 }

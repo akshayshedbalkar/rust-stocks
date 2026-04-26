@@ -29,24 +29,32 @@ impl<'a> Api<'a> {
     pub fn fetch_stock(&mut self, stock: &str) -> &Self {
         let stock_url = self.base_url.clone() + "&symbol=" + stock;
 
-        let response = self
+        let raw_response = self
             .client
             .get(&stock_url)
             .send()
             .expect(&format!("There was a problem fetching data for {}", stock));
 
-        self.data.push(response.json().expect(&format!(
-            "There was a problem deserializing data for {} using url {}",
-            stock, stock_url
-        )));
+        let api_response: ApiResponse = raw_response.json().expect("There was a problem in deserialization");
+
+        match api_response {
+            ApiResponse::Success(data) => {
+                self.data.push(data);
+            }
+            ApiResponse::Failure { information } => {
+                println!("{}", information);
+            }
+        }
 
         self
     }
+
     pub fn fetch(&mut self) -> &Self {
         for stock in self.config.stocks.clone() {
             self.fetch_stock(&stock);
+            std::thread::sleep(std::time::Duration::from_secs(1));
         }
-        
+
         self
     }
 }
@@ -107,4 +115,14 @@ impl ApiData {
             historical_data: BTreeMap::new(),
         }
     }
+}
+
+#[derive(Deserialize)]
+#[serde(untagged)]
+pub enum ApiResponse {
+    Success(ApiData),
+    Failure {
+        #[serde(rename = "Information")]
+        information: String,
+    },
 }
