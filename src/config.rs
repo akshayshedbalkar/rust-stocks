@@ -9,6 +9,12 @@ pub struct Config {
     pub stocks: Vec<String>,
 }
 
+impl Default for Config {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Config {
     const CONFIG: &str = include_str!("Stocks.toml");
 
