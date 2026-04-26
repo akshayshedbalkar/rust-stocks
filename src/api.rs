@@ -73,12 +73,6 @@ pub struct MetaData {
     pub zone: String,
 }
 
-impl Default for MetaData {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl MetaData {
     pub fn new() -> Self {
         MetaData {
@@ -114,12 +108,6 @@ pub struct ApiData {
     pub meta_data: MetaData,
     #[serde(rename = "Weekly Adjusted Time Series")]
     pub historical_data: BTreeMap<NaiveDate, DataBlock>,
-}
-
-impl Default for ApiData {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 impl ApiData {
