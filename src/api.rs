@@ -106,7 +106,7 @@ pub struct DataBlock {
 pub struct ApiData {
     #[serde(rename = "Meta Data")]
     pub meta_data: MetaData,
-    #[serde(rename = "Weekly Adjusted Time Series")]
+    #[serde(alias = "Weekly Adjusted Time Series")]
     pub historical_data: BTreeMap<NaiveDate, DataBlock>,
 }
 
