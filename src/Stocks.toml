@@ -1,4 +1,3 @@
-function   = "TIME_SERIES_WEEKLY_ADJUSTED"
-column     = "adjusted_close"
-plot_start = "2026-01-01"
+function   = "weekly"
+plot_start = "2015-01-01"
 stocks     = ["TTWO","AMD","NVDA","GOOG","AMZN",]
