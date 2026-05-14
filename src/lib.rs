@@ -10,7 +10,6 @@ pub fn run() {
     a.fetch();
     if !a.data.is_empty()
     {
-        println!("{:#?}", a.data[0].meta_data);
-        println!("{:#?}", a.data[0].historical_data.last_entry().unwrap());
+        println!("{:#?}", a.data[0].historical_data.first().unwrap());
     }
 }
