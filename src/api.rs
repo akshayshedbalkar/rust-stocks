@@ -27,11 +27,12 @@ impl<'a> Api<'a> {
     }
 
     pub fn fetch_stock(&mut self, stock: &str) -> &Self {
-        let stock_url = self.base_url.clone() + "&symbol=" + stock;
+        let query = vec!(("symbol", stock));
 
         let response = self
             .client
-            .get(&stock_url)
+            .get(&self.base_url)
+            .query(&query)
             .send()
             .unwrap_or_else(|_| panic!("There was a problem fetching data for {}", stock));
 
