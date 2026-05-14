@@ -17,7 +17,7 @@ impl<'a> Api<'a> {
         let start_date = "&startDate=".to_string() + &config.plot_start;
 
         let b = "https://api.tiingo.com/tiingo/daily/".to_string();
-        let q = "/prices?sort=date".to_string() + &function_info + &license_info + &start_date;
+        let q = "/prices?sort=date&columns=date,adjClose".to_string() + &function_info + &license_info + &start_date;
 
         Api {
             data: Vec::new(),
@@ -42,12 +42,8 @@ impl<'a> Api<'a> {
             .expect("There was a problem in deserialization");
 
         match deserialized_response {
-            ApiResponse::Success(data) => {
-                self.data.push(data);
-            }
-            ApiResponse::Failure(information) => {
-                println!("{}", information);
-            }
+            ApiResponse::Success(data) => self.data.push(data),
+            ApiResponse::Failure(information) => println!("{}", information),
         }
 
         self
