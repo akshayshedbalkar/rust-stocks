@@ -1,4 +1,3 @@
-license    = "EE3UNJ8LUELJS698"
 function   = "TIME_SERIES_WEEKLY_ADJUSTED"
 column     = "adjusted_close"
 plot_start = "2026-01-01"
