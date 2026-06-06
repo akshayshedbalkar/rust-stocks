@@ -1,12 +1,16 @@
 use serde::Deserialize;
+use dotenvy::dotenv;
+use std::env;
 
 #[derive(Deserialize)]
 pub struct Config {
+    #[serde(skip_deserializing)]
     pub license: String,
     pub function: String,
-    pub column: String,
+    pub columns: String,
     pub plot_start: String,
     pub stocks: Vec<String>,
+    pub y_max: f32
 }
 
 impl Config {
@@ -18,6 +22,11 @@ impl Config {
         }
 
         let file_contents = std::fs::read_to_string("Stocks.toml").unwrap();
-        toml::from_str(&file_contents).expect("Unable to parse configuration file")
+        let mut c: Config = toml::from_str(&file_contents).expect("Unable to parse configuration file");
+
+        dotenv().ok();
+        c.license = env::var("license").expect("Please provide an API key in .env file");
+        c
+        
     }
 }

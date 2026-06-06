@@ -1,16 +1,15 @@
 pub mod api;
 pub mod config;
+pub mod plot;
 
 pub use api::*;
 pub use config::*;
+pub use plot::*;
 
 pub fn run() {
-    let c = Config::new();
-    let mut a: Api = Api::new(&c);
+    let mut a: Api = Api::new();
     a.fetch();
-    if !a.data.is_empty()
-    {
-        println!("{:#?}", a.data[0].meta_data);
-        println!("{:#?}", a.data[0].historical_data.last_entry().unwrap());
-    }
+
+    let p: Plot = Plot::new(&a);
+    p.plot();
 }

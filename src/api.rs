@@ -1,37 +1,38 @@
 use crate::config::Config;
-use chrono::NaiveDate;
 use reqwest::blocking::Client;
-use serde::Deserialize;
-use std::collections::BTreeMap;
+use serde::{Deserialize, Serialize};
+use chrono::{DateTime, Utc};
 
-pub struct Api<'a> {
+pub struct Api {
     pub data: Vec<ApiData>,
     base_url: String,
-    config: &'a Config,
+    pub config: Config,
     client: Client,
+    queries: Queries,
 }
 
-impl<'a> Api<'a> {
-    pub fn new(config: &'a Config) -> Self {
-        let function_info = "function=".to_string() + &config.function;
-        let license_info = "&apikey=".to_string() + &config.license;
-        let construct_url =
-            "https://www.alphavantage.co/query?".to_string() + &function_info + &license_info;
+impl Api {
+    pub fn new() -> Self {
+        let c = Config::new();
+        let q = Queries::new(&c.function, &c.license, &c.plot_start, "date", &c.columns);
+        let b = "https://api.tiingo.com/tiingo/daily/".to_string();
 
         Api {
             data: Vec::new(),
-            base_url: construct_url,
-            config,
+            base_url: b,
+            config: c,
             client: Client::new(),
+            queries: q,
         }
     }
 
-    pub fn fetch_stock(&mut self, stock: &str) -> &Self {
-        let stock_url = self.base_url.clone() + "&symbol=" + stock;
+    fn fetch_stock(&self, stock: &str) -> Option<ApiData> {
+        let stock_url = self.base_url.clone() + stock + "/prices";
 
         let response = self
             .client
             .get(&stock_url)
+            .query(&self.queries)
             .send()
             .unwrap_or_else(|_| panic!("There was a problem fetching data for {}", stock));
 
@@ -40,91 +41,68 @@ impl<'a> Api<'a> {
             .expect("There was a problem in deserialization");
 
         match deserialized_response {
-            ApiResponse::Success(data) => {
-                self.data.push(data);
-            }
-            ApiResponse::Failure { information } => {
+            ApiResponse::Success(data) => Some(data),
+            ApiResponse::Failure(information) => {
                 println!("{}", information);
+                None
             }
         }
-
-        self
     }
 
     pub fn fetch(&mut self) -> &Self {
         for stock in &self.config.stocks {
-            self.fetch_stock(stock);
-            std::thread::sleep(std::time::Duration::from_secs(1));
+            if let Some(s) = self.fetch_stock(stock) {
+                self.data.push(s);
+            }
         }
 
         self
     }
 }
 
-#[derive(Deserialize, Debug)]
-pub struct MetaData {
-    #[serde(rename = "1. Information")]
-    pub info: String,
-    #[serde(rename = "2. Symbol")]
-    pub symbol: String,
-    #[serde(rename = "3. Last Refreshed")]
-    pub refresh: String,
-    #[serde(rename = "4. Time Zone")]
-    pub zone: String,
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Queries {
+    resample_freq: String,
+    token: String,
+    start_date: String,
+    sort: String,
+    columns: String,
 }
-
-impl MetaData {
-    pub fn new() -> Self {
-        MetaData {
-            info: String::new(),
-            symbol: String::new(),
-            refresh: String::new(),
-            zone: String::new(),
+impl Queries {
+    pub fn new(
+        resample_freq: &str,
+        token: &str,
+        start_date: &str,
+        sort: &str,
+        columns: &str,
+    ) -> Self {
+        Queries {
+            resample_freq: resample_freq.to_string(),
+            token: token.to_string(),
+            start_date: start_date.to_string(),
+            sort: sort.to_string(),
+            columns: columns.to_string(),
         }
     }
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct DataBlock {
-    #[serde(rename = "1. open")]
-    pub open: String,
-    #[serde(rename = "2. high")]
-    pub high: String,
-    #[serde(rename = "3. low")]
-    pub low: String,
-    #[serde(rename = "4. close")]
-    pub close: String,
-    #[serde(rename = "5. adjusted close")]
-    pub adjusted: String,
-    #[serde(rename = "6. volume")]
-    pub volume: String,
-    #[serde(rename = "7. dividend amount")]
-    pub dividend: String,
+    pub date: DateTime<Utc>,
+    pub adj_close: f32,
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(transparent)]
 pub struct ApiData {
-    #[serde(rename = "Meta Data")]
-    pub meta_data: MetaData,
-    #[serde(alias = "Weekly Adjusted Time Series")]
-    pub historical_data: BTreeMap<NaiveDate, DataBlock>,
-}
-
-impl ApiData {
-    pub fn new() -> Self {
-        ApiData {
-            meta_data: MetaData::new(),
-            historical_data: BTreeMap::new(),
-        }
-    }
+    pub historical_data: Vec<DataBlock>,
 }
 
 #[derive(Deserialize)]
 #[serde(untagged)]
 pub enum ApiResponse {
     Success(ApiData),
-    Failure {
-        #[serde(rename = "Information")]
-        information: String,
-    },
+    Failure(String),
 }
