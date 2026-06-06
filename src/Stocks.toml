@@ -1,5 +1,5 @@
 function   = "weekly"
-plot_start = "2015-01-01"
+plot_start = "2018-01-01"
 columns    = "date,adjClose"
-stocks     = ["TTWO","AMD","NVDA","GOOG","AMZN","MSFT","AAPL","META",]
+stocks     = ["TTWO","GOOG","AMZN","MSFT","AAPL","META",]
 y_max      = 800
