@@ -10,6 +10,7 @@ pub struct Config {
     pub columns: String,
     pub plot_start: String,
     pub stocks: Vec<String>,
+    pub y_max: f32
 }
 
 impl Config {

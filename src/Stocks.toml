@@ -2,3 +2,4 @@ function   = "weekly"
 plot_start = "2015-01-01"
 columns    = "date,adjClose"
 stocks     = ["TTWO","AMD","NVDA","GOOG","AMZN","MSFT","AAPL","META",]
+y_max      = 800

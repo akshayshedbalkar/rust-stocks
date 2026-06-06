@@ -1,11 +1,12 @@
 use crate::config::Config;
 use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
+use chrono::{DateTime, Utc};
 
 pub struct Api {
     pub data: Vec<ApiData>,
     base_url: String,
-    config: Config,
+    pub config: Config,
     client: Client,
     queries: Queries,
 }
@@ -89,7 +90,7 @@ impl Queries {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct DataBlock {
-    pub date: String,
+    pub date: DateTime<Utc>,
     pub adj_close: f32,
 }
 
