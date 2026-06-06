@@ -13,12 +13,12 @@ impl<'a> Plot<'a> {
 
     pub fn plot(&self) {
         let naive_date =
-            NaiveDate::parse_from_str(&self.api_ref.config.plot_start, "%Y-%m-%d").unwrap();
-        let start_date = Utc.from_utc_datetime(&naive_date.and_hms_opt(0, 0, 0).unwrap());
+            NaiveDate::parse_from_str(&self.api_ref.config.plot_start, "%Y-%m-%d").expect("Error getting date from Stocks.toml");
+        let start_date = Utc.from_utc_datetime(&naive_date.and_hms_opt(0, 0, 0).expect("Error parsing start date"));
         let end_date = Utc::now();
 
-        let root_drawing_area = BitMapBackend::new("stocks.png", (1024, 768)).into_drawing_area();
-        root_drawing_area.fill(&WHITE).unwrap();
+        let root_drawing_area = BitMapBackend::new("stocks.png", (1920, 1080)).into_drawing_area();
+        root_drawing_area.fill(&WHITE).expect("Some plotting error");
 
         let mut chart = ChartBuilder::on(&root_drawing_area)
             .margin(10)
@@ -28,7 +28,7 @@ impl<'a> Plot<'a> {
                 "Adjusted Close Price Over Time",
                 ("sans-serif", 30).into_font(),
             )
-            .build_cartesian_2d(start_date..end_date, 0.0_f32..self.api_ref.config.y_max)
+            .build_cartesian_2d(start_date..end_date, -200.0_f32..self.api_ref.config.y_max)
             .expect("Problem in creating graph");
 
         chart
