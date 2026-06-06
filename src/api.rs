@@ -2,6 +2,7 @@ use crate::config::Config;
 use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
+use std::collections::HashMap;
 
 pub struct Api {
     pub data: Vec<ApiData>,
@@ -43,7 +44,7 @@ impl Api {
         match deserialized_response {
             ApiResponse::Success(data) => Some(data),
             ApiResponse::Failure(information) => {
-                println!("{}", information);
+                println!("{:#?}", information);
                 None
             }
         }
@@ -104,5 +105,5 @@ pub struct ApiData {
 #[serde(untagged)]
 pub enum ApiResponse {
     Success(ApiData),
-    Failure(String),
+    Failure(HashMap<String, String>),
 }
