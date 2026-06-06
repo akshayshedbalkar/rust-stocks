@@ -5,8 +5,7 @@ pub use api::*;
 pub use config::*;
 
 pub fn run() {
-    let c = Config::new();
-    let mut a: Api = Api::new(&c);
+    let mut a: Api = Api::new();
     a.fetch();
     if !a.data.is_empty()
     {

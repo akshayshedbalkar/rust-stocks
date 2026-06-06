@@ -4,7 +4,7 @@ use serde::Deserialize;
 pub struct Config {
     pub license: String,
     pub function: String,
-    pub column: String,
+    pub columns: String,
     pub plot_start: String,
     pub stocks: Vec<String>,
 }
