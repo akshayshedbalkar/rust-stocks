@@ -18,6 +18,7 @@ impl<'a> Plot<'a> {
         let end_date = Utc::now();
 
         let plot_name = format!("stocks_{}.png", end_date.format("%Y%m%d_%H%M%S").to_string());
+
         let root_drawing_area = BitMapBackend::new(&plot_name, (1920, 1080)).into_drawing_area();
         root_drawing_area.fill(&WHITE).expect("Some plotting error");
 
