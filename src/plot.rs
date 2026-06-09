@@ -30,7 +30,7 @@ impl<'a> Plot<'a> {
                 "Adjusted Close Price Over Time",
                 ("sans-serif", 30).into_font(),
             )
-            .build_cartesian_2d(start_date..end_date, -200.0_f32..self.api_ref.config.y_max)
+            .build_cartesian_2d(start_date..end_date, self.api_ref.config.y_min..self.api_ref.config.y_max)
             .expect("Problem in creating graph");
 
         chart

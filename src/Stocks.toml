@@ -3,3 +3,4 @@ plot_start = "2018-01-01"
 columns    = "date,adjClose"
 stocks     = ["TTWO","GOOG","AMZN","MSFT","AAPL","META",]
 y_max      = 800
+y_min      = -200
